@@ -1,7 +1,5 @@
 import React from 'react'
 
-
-
 const App = () => {
 
 
@@ -11,4 +9,5 @@ const App = () => {
     </div>
   )
 }
+
 export default App
