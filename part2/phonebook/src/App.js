@@ -1,26 +1,32 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import { getAll } from './node'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
-
+  const [persons, setPersons] = useState([])
   const [filterString, setFilterString] = useState('')
+
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+
+
+  useEffect(() => {
+    const getPersons = async () => getAll().then(res => setPersons(res.data))
+    getPersons()
+  }, [])
+
 
   return (
     <div>
       <h2>Phonebook</h2>
+      {successMessage && <h2 className='message success'>{successMessage}</h2>}
+      {errorMessage && <h2 className='message error'>{errorMessage}</h2>}
       <Filter value={filterString} onChange={(e) => setFilterString(e.target.value)} />
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm persons={persons} setPersons={setPersons} setSuccessMessage={setSuccessMessage} setErrorMessage={setErrorMessage} />
       <h2>Numbers</h2>
-      <Persons filterString={filterString} persons={persons} />
+      <Persons filterString={filterString} persons={persons} setPersons={setPersons} />
     </div>
   )
 }

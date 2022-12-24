@@ -1,19 +1,48 @@
 import React, { useState } from 'react'
+import { getAll, create, update } from '../node'
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, setSuccessMessage, setErrorMessage }) => {
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault()
     if (persons.some(({ name }) => newName === name)) {
-      return alert(`${newName} is already added to phonebook`)
+      alert(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      const person = persons.find(p => p.name === newName)
+      await update(person.id, { ...person, number: newNumber })
+        .then(data => {
+          setSuccessMessage(`Update ${newName} new number success!`)
+          setTimeout(() => {
+            setSuccessMessage('')
+          }, 3000)
+        })
+        .catch(error => {
+          setErrorMessage(`Information of ${newName} has already been removed from server!`)
+          setTimeout(() => {
+            setErrorMessage('')
+          }, 3000)
+        })
+
+
     } else {
-      setPersons([...persons, { name: newName, number: newNumber }])
-      setNewName('')
-      setNewNumber('')
+      const newObj =
+        await create({ name: newName, number: newNumber })
+          .then(data => {
+            setSuccessMessage(`Added ${newName} success!`)
+            setTimeout(() => {
+              setSuccessMessage('')
+            }, 3000)
+            return data
+          })
+      setPersons([...persons, newObj.data])
+
     }
+    setNewName('')
+    setNewNumber('')
+    await getAll()
+      .then(res => setPersons(res.data))
   }
   return (
     <>
