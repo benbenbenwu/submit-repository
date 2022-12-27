@@ -2,10 +2,18 @@ const express = require('express')
 
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
+const serverless = require('serverless-http')
 
+app.use(express.static('build'))
 app.use(express.json())
+app.use(cors())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :resData'))
 morgan.token('resData', function (req, res) { return JSON.stringify(req.body) })
+
+
+const router = express.Router()
+
 
 let persons = [
   {
@@ -31,18 +39,18 @@ let persons = [
 ]
 
 
-app.get('/api/persons', (req, res) => {
+router.get('/persons', (req, res) => {
   res.json(persons)
 })
 
-app.get('/info', (req, res) => {
+router.get('/info', (req, res) => {
   res.send(`
     <h1>Phonebook has info for ${persons.length} people</h1>
     <p>${new Date()}</p>
   `)
 })
 
-app.get('/api/persons/:id', (req, res) => {
+router.get('/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   const person = persons.find(p => p.id === id)
   if (person) {
@@ -52,14 +60,21 @@ app.get('/api/persons/:id', (req, res) => {
   }
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+router.delete('/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   persons = persons.filter(person => person.id !== id)
   res.status(204).send('success')
 })
 
-app.post('/api/persons', (req, res) => {
-  console.log(req);
+router.put(' /persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  const { number } = req.body
+  const { name } = persons.find(p => p.id === id)
+  persons = [...persons.filter(p => p.id !== id), { id, name, number }]
+  res.status(204).send('update success')
+})
+
+router.post('/persons', (req, res) => {
 
   const { name, number } = req.body
   if (!name || persons.find(p => p.name === name)) {
@@ -70,10 +85,11 @@ app.post('/api/persons', (req, res) => {
     return res.status(404).send({ error: 'number must be unique' })
   }
   const id = Math.floor(Math.random() * 100000000)
+  console.log(id);
   persons = [...persons, { id, name, number }]
   res.status(200).send({
     data: {
-      name, number
+      id, name, number
     },
     mess: 'add success'
   })
@@ -81,7 +97,14 @@ app.post('/api/persons', (req, res) => {
 })
 
 
+app.use('/.netlify/functions/api', router)
 
-app.listen('3001', () => {
+
+
+
+/* app.listen(process.env.PORT || '3001', () => {
   console.log('Listening port 3001......');
-})
+}) */
+module.exports = app;
+
+module.exports.handler = serverless(app)
