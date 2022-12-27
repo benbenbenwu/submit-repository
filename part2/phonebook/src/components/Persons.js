@@ -4,9 +4,10 @@ import { del } from '../node'
 const Persons = ({ filterString, persons, setPersons }) => {
 
   const onDeleteHandlder = async (id, name) => {
-    alert(`Delete ${name}`)
-    await del(id)
-    await setPersons(persons.filter(person => person.id !== id))
+    if (window.confirm(`Delete ${name}`)) {
+      await del(id)
+      await setPersons(persons.filter(person => person.id !== id))
+    }
   }
 
   return (
