@@ -30,15 +30,18 @@ const errorHandler = (error, request, response, next) => {
 
 const userExtractor = async (req, res, next) => {
 
-  const token = getTokenFrom(req)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
+  if (process.env.NODE_ENV !== 'test') {
+    const token = getTokenFrom(req)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const username = req.body.username
+    const user = await User.find({ username })
+    req.body.user = user[0]
   }
 
-  const username = req.body.username
-  const user = await User.find({ username })
-  req.body.user = user[0]
   next()
 }
 

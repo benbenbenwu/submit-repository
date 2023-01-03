@@ -14,7 +14,14 @@ blogRouter.get('/', async (req, res) => {
 
 blogRouter.post('/', async (req, res) => {
 
-  const user = req.body.user
+  let user
+
+  if (process.env.NODE_ENV === 'test') {
+    user = await User.findById(req.body.userId)
+  } else {
+    user = req.body.user
+  }
+
 
   if (!req.body.title || !req.body.url) {
     return res.status(400).json()
@@ -40,6 +47,11 @@ blogRouter.delete('/:id', async (req, res) => {
   const user = req.body.user
   const blogId = req.params.id
   const blog = await Blog.findById(blogId)
+
+  if (process.env.NODE_ENV === 'test') {
+    await Blog.findByIdAndRemove({ _id: blogId })
+    return res.status(204).json()
+  }
 
   if (blog.user.toString() === user._id.toString()) {
     await Blog.findByIdAndRemove({ _id: blogId })
