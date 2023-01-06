@@ -23,18 +23,12 @@ describe('Blog app', function () {
   describe('Login', function () {
 
     it('succeeds with correct credentials', function () {
-      cy.get('#username').type('mluukkai')
-      cy.get('#password').type('salainen')
-      cy.get('#login-button').click()
-
+      cy.login('mluukkai', 'salainen')
       cy.contains('Matti Luukkainen logged in')
     })
 
     it('fails with wrong credentials', function () {
-      cy.get('#username').type('mluukkai')
-      cy.get('#password').type('sala')
-      cy.get('#login-button').click()
-
+      cy.login('mluukkai', 'sala')
       cy.contains('Wrong username or password')
     })
   })
@@ -42,18 +36,76 @@ describe('Blog app', function () {
 
   describe('when logged in', function () {
     beforeEach(function () {
-      cy.get('#username').type('mluukkai')
-      cy.get('#password').type('salainen')
-      cy.get('#login-button').click()
+      cy.login('mluukkai', 'salainen')
     })
 
     it('a new note can be created', function () {
-      cy.contains('new blog').click()
-      cy.get('#title').type('TDD harms architecture')
-      cy.get('#author').type('Robert C. Martin')
-      cy.get('#url').type('http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html')
-      cy.get('#create-button').click()
+      cy.createBlog(
+        'TDD harms architecture',
+        'Robert C. Martin',
+        'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html')
+
     })
   })
+
+  describe('like a blog', function () {
+    beforeEach(function () {
+      cy.login('mluukkai', 'salainen')
+    })
+
+    it('add a like to a blog', function () {
+      cy.createBlog(
+        'Type wars',
+        'Robert C. Martin',
+        'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html')
+
+      cy.get('#view-button').click()
+      cy.get('#like-button').click()
+      cy.get('.likes').contains('likes 1')
+    })
+  })
+
+  describe('delete a blog', function () {
+    beforeEach(function () {
+      cy.login('mluukkai', 'salainen')
+    })
+
+    it('delete a blog', function () {
+
+      cy.createBlog(
+        'Type wars',
+        'Robert C. Martin',
+        'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html')
+      cy.get('#view-button').click()
+      cy.get('#remove-button').click()
+      cy.contains('delete success')
+    })
+  })
+
+  /* describe('sort blogs', function () {
+    beforeEach(function () {
+      cy.login('mluukkai', 'salainen')
+    })
+
+    it('sort blogs', function () {
+      cy.createBlogLike(
+        'TDD harms architecture',
+        'Robert C. Martin',
+        'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html', 2)
+      cy.createBlogLike(
+        'Type wars',
+        'Robert C. Martin',
+        'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html', 1)
+      cy.createBlogLike(
+        "React patterns",
+        "Michael Chan",
+        "https://reactpatterns.com/", 3
+      )
+      cy.get('.blog').eq(0).should('title', 'React patterns')
+      cy.get('.blog').eq(1).should('title', 'TDD harms architecture')
+      cy.get('.blog').eq(2).should('title', 'Type wars')
+
+    })
+  }) */
 
 })

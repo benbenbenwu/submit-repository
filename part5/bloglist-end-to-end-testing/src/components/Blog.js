@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { getAll, update, del } from "../services/blogs"
 
-const Blog = ({ blog, setBlogs, user, testHandleView, testHandleLike }) => {
+const Blog = ({ blog, setBlogs, user, testHandleView, testHandleLike, setCorrectMessage }) => {
 
   const [blogVisible, setBlogVisible] = useState(false)
 
@@ -20,6 +20,7 @@ const Blog = ({ blog, setBlogs, user, testHandleView, testHandleLike }) => {
     const username = user.username
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       await del(blog.id, username)
+      setCorrectMessage('delete success')
     }
     await getAll().then(blogs =>
       setBlogs(blogs)
@@ -31,14 +32,14 @@ const Blog = ({ blog, setBlogs, user, testHandleView, testHandleLike }) => {
   return <>
     <div style={showWhenVisible}>
       {blog.title} {blog.author}
-      <button onClick={testHandleView || hanldeView}>view</button>
+      <button onClick={testHandleView || hanldeView} id="view-button">view</button>
     </div>
-    <div style={hidenWhenVisible}>
-      <p>{blog.title}</p> <button onClick={() => setBlogVisible(false)}>hide</button>
+    <div style={hidenWhenVisible} className="blog">
+      <p>{blog.title}</p> <button onClick={() => setBlogVisible(false)} id="hide-button">hide</button>
       <p>{blog.url}</p>
-      <p>likes {blog.likes}</p> <button onClick={testHandleLike || handleLike}>like</button>
+      <p className="likes">likes {blog.likes}</p> <button onClick={testHandleLike || handleLike} id="like-button">like</button>
       <p>{blog.author}</p>
-      <button onClick={handleRemove}>remove</button>
+      <button onClick={handleRemove} id="remove-button">remove</button>
     </div>
   </>
 }

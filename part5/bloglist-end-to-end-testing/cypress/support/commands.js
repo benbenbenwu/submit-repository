@@ -23,9 +23,33 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-Cypress.Commands.add('login', (user) => {
-  cy.request('POST', 'http://localhost:3001/api/login', user).then(res => {
-    localStorage.setItem('loggedBlogappUser', JSON.stringify(res))
-    cy.visit('http://localhost:3000')
-  })
+Cypress.Commands.add('login', (username, password) => {
+  cy.get('#username').type(username)
+  cy.get('#password').type(password)
+  cy.get('#login-button').click()
+})
+
+Cypress.Commands.add('createBlog', (title, author, url) => {
+  cy.contains('new blog').click()
+  cy.get('#title').type(title)
+  cy.get('#author').type(author)
+  cy.get('#url').type(url)
+  cy.get('#create-button').click()
+})
+
+Cypress.Commands.add('createBlogLike', (title, author, url, likes) => {
+  cy.contains('new blog').click()
+  cy.get('#title').type(title)
+  cy.get('#author').type(author)
+  cy.get('#url').type(url)
+  cy.get('#create-button').click()
+  cy.get('#view-button').click()
+  let timer
+  for (let index = 0; index < likes; index++) {
+    timer = setTimeout(() => {
+      cy.get('#like-button').click()
+
+    }, 2000)
+  }
+  clearTimeout(timer)
 })

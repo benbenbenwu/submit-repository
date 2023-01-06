@@ -8,7 +8,8 @@ const BlogForm = ({
   setErrorMessage,
   setCorrectMessage,
   setBlogs,
-  blogs
+  blogs,
+  createBlogTest
 }) => {
 
   const [title, setTitle] = useState('')
@@ -23,7 +24,13 @@ const BlogForm = ({
 
     try {
 
-      await create({ title, author, url, username: user.username })
+      if (createBlogTest) {
+
+        await createBlogTest({ title, author, url, username: user.username })
+      } else {
+
+        await create({ title, author, url, username: user.username })
+      }
       setTitle('')
       setAuthor('')
       setUrl('')
@@ -83,10 +90,10 @@ const BlogForm = ({
         </div>
         <button type="submit" id="create-button">create</button>
       </form>
-      <button onClick={() => setBlogsVisible(false)}>cancel</button>
+      <button onClick={() => setBlogsVisible(false)} id="cancel-button">cancel</button>
     </div>
-    {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-      <Blog key={blog.id} blog={blog} setBlogs={setBlogs} user={user} />
+    {!createBlogTest && blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+      <Blog key={blog.id} blog={blog} setBlogs={setBlogs} user={user} setCorrectMessage={setCorrectMessage} />
     )}
   </div>
 }
