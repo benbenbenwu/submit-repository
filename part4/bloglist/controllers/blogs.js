@@ -14,13 +14,13 @@ blogRouter.get('/', async (req, res) => {
 })
 
 blogRouter.post('/', userExtractor, async (req, res) => {
-
   let user
 
   if (process.env.NODE_ENV === 'test') {
-    user = await User.findById(req.body.userId)
+    user = await User.findById(req.body.user._id)
   } else {
     user = req.body.user
+    console.log('user');
   }
 
 
@@ -33,11 +33,14 @@ blogRouter.post('/', userExtractor, async (req, res) => {
     req.body.likes = 0
     result = 0
   }
-  const { title, author, url, likes } = req.body
 
 
-  const blog = new Blog({ title, author, url, likes, user: user._id })
+  const newBlog = { title: req.body.title, author: req.body.author, url: req.body.url, likes: req.body.likes, user: req.body.user._id }
+
+  const blog = new Blog(newBlog)
+
   const savedBlog = await blog.save()
+
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
   res.status(201).json(result)
