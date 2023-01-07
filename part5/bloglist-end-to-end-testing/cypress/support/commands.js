@@ -48,7 +48,6 @@ Cypress.Commands.add('createBlogLike', (title, author, url, likes) => {
   for (let index = 0; index < likes; index++) {
     timer = setTimeout(() => {
       cy.get('#like-button').click()
-
     }, 2000)
   }
   clearTimeout(timer)
