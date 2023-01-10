@@ -71,7 +71,7 @@ blogRouter.delete('/:id', userExtractor, async (req, res) => {
 })
 
 
-blogRouter.put('/:id', async (req, res) => {
+blogRouter.put('/:id', userExtractor, async (req, res) => {
   const blogId = req.params.id
   const updateLikes = req.body.updateLikes
   await Blog.findByIdAndUpdate({ _id: blogId }, { likes: updateLikes })

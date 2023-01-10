@@ -29,7 +29,6 @@ export const createBlogAsnyc = blog => {
   return async dispatch => {
     try {
       const newBlog = await create(blog)
-      console.log(newBlog);
       dispatch(createNewBlog(newBlog))
       setNotification({ type: 'success', mess: `a new blog ${newBlog.title} by ${newBlog.author} added` })
       setTimeout(() => {
