@@ -9,6 +9,7 @@ import { getBlogsAsnyc } from './reducer/blogsReducer'
 import { setUser } from './reducer/userReducer'
 import Menu from "./components/Menu"
 import ShowAddedBlog from "./components/ShowAddedBlog"
+import ShowBlogDetail from "./components/ShowBlogDetail"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/" element={<BlogForm />} />
         <Route path="/users" element={<LoginForm />} />
         <Route path='/users/:id' element={<ShowAddedBlog />} />
+        <Route path='/blogs/:id' element={<ShowBlogDetail />} />
       </Routes>
     </div>
   )

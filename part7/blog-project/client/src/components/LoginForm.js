@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import { setUserAsnyc } from '../reducer/userReducer'
 import { getAllUserAsync } from '../reducer/userArrayReducer'
 import { useField } from '../hooks'
-import { Routes, Route, Link } from 'react-router-dom'
-import ShowAddedBlog from './ShowAddedBlog'
+import { Link } from 'react-router-dom'
 
 const LoginForm = ({
   user,
@@ -49,22 +48,30 @@ const LoginForm = ({
           </>
           : null}
       </>
-      <h2>User</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>blogs created</th>
-          </tr>
-          {userArray.map((u) => (
-            <tr key={u.id}>
-              <td><Link to={`/users/${u.id}`}>{u.name}</Link></td>
-              <td>{u.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
+      <>
+        {
+          user
+            ?
+            <>
+              <h2>User</h2>
+              <table>
+                <tbody>
+                  <tr>
+                    <th></th>
+                    <th>blogs created</th>
+                  </tr>
+                  {userArray.map((u) => (
+                    <tr key={u.id}>
+                      <td><Link to={`/users/${u.id}`}>{u.name}</Link></td>
+                      <td>{u.blogs.length}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+            : null
+        }
+      </>
     </div>
   )
 }
