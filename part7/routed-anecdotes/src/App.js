@@ -32,7 +32,6 @@ const AnecdoteList = ({ anecdotes }) => (
 const Anecdote = ({ anecdotes }) => {
 
   const id = useParams().id
-  console.log(id);
   const anecdote = anecdotes.find(a => a.id === Number(id))
 
 
